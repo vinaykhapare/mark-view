@@ -1,0 +1,716 @@
+@import "tailwindcss";
+@import "katex/dist/katex.min.css";
+
+/* ─── CSS Variables & Design Tokens ────────────────────────────────────────── */
+:root {
+  --font-sans: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: var(--font-geist-mono), "SF Mono", "Fira Code", monospace;
+
+  /* Modern Refined Light Palette (Clean Porcelain / Zinc) */
+  --bg-primary: #ffffff;
+  --bg-secondary: #fbfbfb;
+  --bg-tertiary: #f4f4f5;
+  --bg-elevated: #ffffff;
+  
+  --border-subtle: #e4e4e7;
+  --border-medium: #d4d4d8;
+  --border-strong: #a1a1aa;
+
+  --text-primary: #09090b;
+  --text-secondary: #52525b;
+  --text-muted: #71717a;
+  --text-faint: #a1a1aa;
+
+  --accent-primary: #4f46e5;
+  --accent-hover: #4338ca;
+  --accent-glow: rgba(79, 70, 229, 0.08);
+  
+  --code-bg: #f4f4f5;
+  --code-border: #e4e4e7;
+  --quote-bg: #f4f4f5;
+  --quote-bar: #4f46e5;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.06), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --shadow-glow: 0 0 20px rgba(79, 70, 229, 0.12);
+}
+
+.dark {
+  /* Ultra-Refined Obsidian & Charcoal (Linear / Raycast Caliber) */
+  --bg-primary: #090a0f;
+  --bg-secondary: #0e1017;
+  --bg-tertiary: #131722;
+  --bg-elevated: #181d2a;
+
+  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-medium: rgba(255, 255, 255, 0.13);
+  --border-strong: rgba(255, 255, 255, 0.22);
+
+  --text-primary: #f4f4f6;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --text-faint: #52525b;
+
+  --accent-primary: #6366f1;
+  --accent-hover: #818cf8;
+  --accent-glow: rgba(99, 102, 241, 0.18);
+
+  --code-bg: #0d1017;
+  --code-border: rgba(255, 255, 255, 0.08);
+  --quote-bg: #10141e;
+  --quote-bar: #6366f1;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 12px 0 rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.7);
+  --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.2);
+}
+
+/* ─── Base Resets ──────────────────────────────────────────────────────────── */
+html, body {
+  min-height: 100%;
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: -0.011em;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ─── Custom Scrollbar ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-medium);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+/* ─── Glassmorphism Utilities ──────────────────────────────────────────────── */
+.glass-panel {
+  background: rgba(13, 18, 28, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+}
+
+:root:not(.dark) .glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+}
+
+/* ─── Markdown Prose Styling ───────────────────────────────────────────────── */
+.markdown-body {
+  color: var(--text-primary);
+  line-height: 1.75;
+  font-size: 15px;
+  word-break: break-word;
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  color: var(--text-primary);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+  margin-top: 1.8em;
+  margin-bottom: 0.5em;
+  scroll-margin-top: 5rem;
+}
+
+.markdown-body h1:first-child {
+  margin-top: 0;
+}
+
+.markdown-body h1 {
+  font-size: 2.15rem;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 0.35em;
+}
+
+.markdown-body h2 {
+  font-size: 1.6rem;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 0.3em;
+}
+
+.markdown-body h3 {
+  font-size: 1.25rem;
+}
+
+.markdown-body h4 {
+  font-size: 1.05rem;
+}
+
+.markdown-body p {
+  margin-bottom: 1.2em;
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+.markdown-body strong {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.markdown-body em {
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.markdown-body del {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.markdown-body a {
+  color: var(--accent-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: opacity 0.15s ease;
+}
+
+.markdown-body a:hover {
+  opacity: 0.8;
+}
+
+.markdown-body blockquote {
+  border-left: 3.5px solid var(--accent-primary);
+  background-color: var(--quote-bg);
+  padding: 12px 18px;
+  margin: 1.2em 0;
+  border-radius: 0 8px 8px 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.markdown-body blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  margin: 1em 0;
+  padding-left: 1.7em;
+  color: var(--text-secondary);
+}
+
+.markdown-body ul {
+  list-style-type: disc;
+}
+
+.markdown-body ol {
+  list-style-type: decimal;
+}
+
+.markdown-body li {
+  margin-bottom: 0.35em;
+}
+
+.markdown-body hr {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  margin: 2em 0;
+}
+
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-size: 14px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+}
+
+.markdown-body thead {
+  background: var(--bg-tertiary);
+}
+
+.markdown-body th,
+.markdown-body td {
+  padding: 10px 14px;
+  text-align: left;
+  border: 1px solid var(--border-subtle);
+}
+
+.markdown-body th {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.markdown-body td {
+  color: var(--text-secondary);
+}
+
+.markdown-body tr:hover td {
+  background: rgba(99, 102, 241, 0.03);
+}
+
+.markdown-body inline-code,
+.markdown-body code:not(pre code) {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background-color: var(--code-bg);
+  border: 1px solid var(--border-subtle);
+  color: #ef4444;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.dark .markdown-body code:not(pre code) {
+  color: #f87171;
+}
+
+.markdown-body img {
+  max-width: 100%;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  margin: 1.2em 0;
+}
+
+/* ─── Math Styling (KaTeX) ─────────────────────────────────────────────────── */
+.katex-display {
+  margin: 1.4em 0 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 12px 0;
+}
+
+/* ─── Print Stylesheet for Vector PDF Export & System Print ─────────────────── */
+@media print {
+  @page {
+    size: auto;
+    margin: 15mm 15mm 18mm 15mm;
+  }
+
+  /* Force pristine white background and high-contrast text */
+  html,
+  body {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    background-color: #ffffff !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    position: static !important;
+  }
+
+  /* Universal Dark-Mode Neutralizer: Force light mode variables across the DOM */
+  :root,
+  .dark {
+    --bg-primary: #ffffff !important;
+    --bg-secondary: #f9fafb !important;
+    --bg-tertiary: #f3f4f6 !important;
+    --bg-elevated: #ffffff !important;
+    --text-primary: #111827 !important;
+    --text-secondary: #374151 !important;
+    --text-muted: #6b7280 !important;
+    --text-faint: #9ca3af !important;
+    --border-subtle: #e5e7eb !important;
+    --border-medium: #d1d5db !important;
+    --border-strong: #9ca3af !important;
+    --code-bg: #f8fafc !important;
+    --code-border: #e2e8f0 !important;
+    --quote-bg: #f9fafb !important;
+    --quote-bar: #4f46e5 !important;
+  }
+
+  /* Hide editor panel, chrome, toolbars, navbars, footers, sidebars, buttons, dialogs, toasts */
+  header,
+  nav,
+  footer,
+  aside,
+  button,
+  input,
+  textarea,
+  select,
+  [role="dialog"],
+  [role="tooltip"],
+  .no-print,
+  .editor-pane,
+  .editor-toolbar,
+  .workspace-navbar,
+  .workspace-sidebar,
+  .workspace-footer,
+  .toast-container,
+  a[aria-label^="Link to"],
+  .markdown-body h1 a,
+  .markdown-body h2 a,
+  .markdown-body h3 a,
+  .markdown-body h4 a,
+  .markdown-body h5 a,
+  .markdown-body h6 a {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    width: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  /* Unclip scroll parents and expand Preview panel to full printable width */
+  div,
+  main,
+  section,
+  article {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  /* Neutralize desktop flexbox rows that divide width side-by-side */
+  .flex,
+  .flex-col,
+  .flex-row,
+  .md\:flex-row,
+  .flex-1 {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Preview Container occupies 100% page width with zero empty margins */
+  .print-area {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
+  /* Expand inner content wrapper (override max-w-4xl and screen paddings) */
+  .print-content-wrapper,
+  .print-area > div {
+    display: block !important;
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    height: auto !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Markdown content typography and element styling */
+  .markdown-body {
+    display: block !important;
+    color: #111827 !important;
+    background: #ffffff !important;
+    font-size: 11pt !important;
+    line-height: 1.65 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Clean page breaks for headings and avoid orphans */
+  .markdown-body h1,
+  .markdown-body h2,
+  .markdown-body h3,
+  .markdown-body h4,
+  .markdown-body h5,
+  .markdown-body h6 {
+    color: #111827 !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .markdown-body h1 {
+    font-size: 20pt !important;
+    border-bottom: 1.5px solid #e5e7eb !important;
+    padding-bottom: 6px !important;
+    margin-top: 18pt !important;
+    margin-bottom: 10pt !important;
+  }
+
+  .markdown-body h1:first-child {
+    margin-top: 0 !important;
+  }
+
+  .markdown-body h2 {
+    font-size: 15pt !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    padding-bottom: 4px !important;
+    margin-top: 16pt !important;
+    margin-bottom: 8pt !important;
+  }
+
+  .markdown-body h3 {
+    font-size: 13pt !important;
+    margin-top: 14pt !important;
+    margin-bottom: 6pt !important;
+  }
+
+  .markdown-body h4 {
+    font-size: 11.5pt !important;
+    margin-top: 12pt !important;
+    margin-bottom: 4pt !important;
+  }
+
+  .markdown-body p,
+  .markdown-body li {
+    color: #1f2937 !important;
+    font-size: 11pt !important;
+    line-height: 1.65 !important;
+  }
+
+  .markdown-body strong {
+    color: #111827 !important;
+    font-weight: 600 !important;
+  }
+
+  /* Avoid breaks inside atomic content blocks */
+  .markdown-body pre,
+  .markdown-body table,
+  .markdown-body blockquote,
+  .markdown-body figure,
+  .markdown-body .katex-display,
+  .markdown-body svg,
+  .markdown-body tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Code blocks with crisp borders and clean background */
+  .markdown-body pre {
+    border: 1px solid #e2e8f0 !important;
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
+    border-radius: 6px !important;
+    padding: 12px 14px !important;
+    margin: 12pt 0 !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+    font-size: 9.5pt !important;
+    line-height: 1.5 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .markdown-body code {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 3px !important;
+    padding: 1px 4px !important;
+    font-size: 0.9em !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .markdown-body pre code {
+    border: none !important;
+    background: transparent !important;
+    color: inherit !important;
+    padding: 0 !important;
+  }
+
+  /* Tables: Crisp borders, light headers, no scroll wrapper constraints */
+  .markdown-body .overflow-x-auto {
+    overflow: visible !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 12pt 0 !important;
+  }
+
+  .markdown-body table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    border: 1px solid #d1d5db !important;
+    font-size: 10pt !important;
+  }
+
+  .markdown-body th,
+  .markdown-body td {
+    border: 1px solid #d1d5db !important;
+    padding: 7px 10px !important;
+    color: #111827 !important;
+  }
+
+  .markdown-body th {
+    background-color: #f3f4f6 !important;
+    font-weight: 600 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .markdown-body tr:hover td {
+    background: transparent !important;
+  }
+
+  /* Blockquotes */
+  .markdown-body blockquote {
+    border-left: 3.5px solid #4f46e5 !important;
+    background-color: #f9fafb !important;
+    color: #4b5563 !important;
+    padding: 8px 14px !important;
+    margin: 12pt 0 !important;
+    border-radius: 0 4px 4px 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Images */
+  .markdown-body img {
+    max-width: 100% !important;
+    height: auto !important;
+    border-radius: 4px !important;
+    border: 1px solid #e5e7eb !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .markdown-body figure {
+    margin: 12pt 0 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Math Equations (KaTeX) */
+  .markdown-body .katex {
+    color: #111827 !important;
+  }
+
+  .markdown-body .katex-display {
+    margin: 12pt 0 !important;
+    padding: 6px 0 !important;
+    overflow: visible !important;
+  }
+
+  /* Diagrams (Mermaid SVG) */
+  .markdown-body svg {
+    max-width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Links: clean readable text with visible underline */
+  .markdown-body a {
+    color: #4338ca !important;
+    text-decoration: underline !important;
+  }
+}
+
+/* ─── Heading Navigation Flash Highlight Animation ─────────────────────────── */
+@keyframes headingFlashPulse {
+  0% {
+    background-color: rgba(99, 102, 241, 0.45);
+    box-shadow: 0 0 0 6px rgba(99, 102, 241, 0.2);
+    border-radius: 8px;
+  }
+  50% {
+    background-color: rgba(99, 102, 241, 0.25);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+.heading-highlight-flash {
+  animation: headingFlashPulse 1.8s ease-out forwards;
+  transition: all 0.3s ease;
+}
+
+/* Line Number Gutter Flash in Editor */
+.line-highlight-active {
+  background-color: rgba(99, 102, 241, 0.25) !important;
+  color: #6366f1 !important;
+  font-weight: 700 !important;
+  border-left: 2px solid #6366f1;
+}
+
+/* ─── Editor Source Locate Highlight Animation ─────────────────────────────── */
+@keyframes editorLineFlashPulse {
+  0% {
+    background-color: rgba(99, 102, 241, 0.38);
+    box-shadow: 0 0 16px rgba(99, 102, 241, 0.2);
+  }
+  30% {
+    background-color: rgba(99, 102, 241, 0.26);
+    box-shadow: 0 0 12px rgba(99, 102, 241, 0.12);
+  }
+  70% {
+    background-color: rgba(99, 102, 241, 0.12);
+    box-shadow: none;
+  }
+  100% {
+    background-color: transparent;
+    box-shadow: none;
+  }
+}
+
+.animate-editor-line-flash {
+  animation: editorLineFlashPulse 2.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ─── Preview Panel Sync Feedback Ping on Double-Click ─────────────────────── */
+@keyframes previewSyncPing {
+  0% {
+    outline: 2px solid rgba(99, 102, 241, 0.85);
+    outline-offset: 3px;
+    background-color: rgba(99, 102, 241, 0.12);
+    border-radius: 6px;
+  }
+  40% {
+    outline: 2px solid rgba(99, 102, 241, 0.4);
+    outline-offset: 5px;
+    background-color: rgba(99, 102, 241, 0.06);
+  }
+  100% {
+    outline: 2px solid transparent;
+    outline-offset: 7px;
+    background-color: transparent;
+  }
+}
+
+.preview-sync-ping {
+  animation: previewSyncPing 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
